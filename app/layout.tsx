@@ -49,27 +49,22 @@ export default function RootLayout({
 function ConditionalFooter() {
   if (typeof window !== 'undefined') {
     const pathname = window.location.pathname
-    const isAdmin = pathname.startsWith('/admin')
-    const isDriver = pathname.startsWith('/driver')
     const isLanding = pathname === '/'
     const isAuth = pathname.startsWith('/auth')
-    const isUser = pathname.startsWith('/dashboard') || 
-                   pathname.startsWith('/services') ||
-                   pathname.startsWith('/chat') ||
-                   pathname.startsWith('/profile') ||
-                   pathname.startsWith('/notifications') ||
-                   pathname.startsWith('/support')
+    const isAdmin = pathname.startsWith('/admin')
+    const isDriver = pathname.startsWith('/driver')
+    const isUser = pathname.startsWith('/dashboard')
     
     // Don't show footer on landing page or auth pages
     if (isLanding || isAuth) return null
     
-    // Show role-specific footers
+    // Show role-specific footers for logged-in areas
     if (isAdmin) return <AdminFooter />
     if (isDriver) return <DriverFooter />
     if (isUser) return <UserFooter />
     
-    // Default footer for other pages
+    // For all other pages (services, business, contact, etc.) show landing footer
     return <Footer />
   }
-  return <Footer />
+  return null
 }
