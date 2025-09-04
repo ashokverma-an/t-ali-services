@@ -52,7 +52,7 @@ export default function Footer() {
         <div className="mt-8 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-6 text-sm text-gray-400">
-              <span>© 2024 GBS Platform. All rights reserved.</span>
+              <span>© 2025 T ALI Platform. All rights reserved.</span>
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
               <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             </div>

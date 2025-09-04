@@ -8,6 +8,8 @@ import ConnectionStatus from '@/components/ui/ConnectionStatus'
 import Footer from '@/components/layout/Footer'
 import AdminFooter from '@/components/layout/AdminFooter'
 import PortalFooter from '@/components/layout/PortalFooter'
+import UserFooter from '@/components/layout/UserFooter'
+import DriverFooter from '@/components/layout/DriverFooter'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -46,18 +48,27 @@ export default function RootLayout({
 
 function ConditionalFooter() {
   if (typeof window !== 'undefined') {
-    const isAdmin = window.location.pathname.startsWith('/admin')
-    const isLanding = window.location.pathname === '/'
-    const isPortal = window.location.pathname.startsWith('/dashboard') || 
-                    window.location.pathname.startsWith('/driver') || 
-                    window.location.pathname.startsWith('/services') ||
-                    window.location.pathname.startsWith('/chat') ||
-                    window.location.pathname.startsWith('/profile') ||
-                    window.location.pathname.startsWith('/notifications')
+    const pathname = window.location.pathname
+    const isAdmin = pathname.startsWith('/admin')
+    const isDriver = pathname.startsWith('/driver')
+    const isLanding = pathname === '/'
+    const isAuth = pathname.startsWith('/auth')
+    const isUser = pathname.startsWith('/dashboard') || 
+                   pathname.startsWith('/services') ||
+                   pathname.startsWith('/chat') ||
+                   pathname.startsWith('/profile') ||
+                   pathname.startsWith('/notifications') ||
+                   pathname.startsWith('/support')
     
+    // Don't show footer on landing page or auth pages
+    if (isLanding || isAuth) return null
+    
+    // Show role-specific footers
     if (isAdmin) return <AdminFooter />
-    if (isLanding) return null
-    if (isPortal) return <PortalFooter />
+    if (isDriver) return <DriverFooter />
+    if (isUser) return <UserFooter />
+    
+    // Default footer for other pages
     return <Footer />
   }
   return <Footer />

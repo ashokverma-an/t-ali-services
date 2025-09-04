@@ -4,31 +4,32 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
-  LayoutDashboard, 
-  Users, 
+  Home, 
   Car, 
-  UtensilsCrossed, 
-  Package, 
-  CreditCard, 
-  BarChart3, 
+  MapPin, 
+  DollarSign, 
+  User, 
   Settings, 
   Menu, 
   X,
   Bell,
   Search,
-  Shield,
+  MessageCircle,
+  HelpCircle,
   LogOut,
-  User,
-  ChevronDown
+  ChevronDown,
+  Navigation
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import AdminFooter from '@/components/layout/AdminFooter'
+import Button from '@/components/ui/Button'
+import Logo from '@/components/ui/Logo'
+import DriverFooter from '@/components/layout/DriverFooter'
 
-interface AdminLayoutProps {
+interface DriverLayoutProps {
   children: React.ReactNode
 }
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+export default function DriverLayout({ children }: DriverLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
@@ -48,14 +49,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { name: 'Users', href: '/admin/users', icon: Users },
-    { name: 'Drivers', href: '/admin/drivers', icon: Car },
-    { name: 'Bookings', href: '/admin/bookings', icon: Package },
-    { name: 'Restaurants', href: '/admin/restaurants', icon: UtensilsCrossed },
-    { name: 'Payments', href: '/admin/payments', icon: CreditCard },
-    { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-    { name: 'Settings', href: '/admin/settings', icon: Settings },
+    { name: 'Dashboard', href: '/driver', icon: Home },
+    { name: 'Active Rides', href: '/driver/rides', icon: Car },
+    { name: 'Navigation', href: '/driver/navigation', icon: Navigation },
+    { name: 'Earnings', href: '/driver/earnings', icon: DollarSign },
+    { name: 'Messages', href: '/chat', icon: MessageCircle },
+    { name: 'Support', href: '/support', icon: HelpCircle },
+    { name: 'Profile', href: '/driver/profile', icon: User },
+    { name: 'Settings', href: '/driver/settings', icon: Settings },
   ]
 
   return (
@@ -68,11 +69,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="fixed inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
         <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-xl">
           <div className="flex items-center justify-between p-4 border-b">
-            <Link href="/admin" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                <Shield className="w-5 h-5 text-white" />
+            <Link href="/driver" className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-uber-green rounded-lg flex items-center justify-center">
+                <Car className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">Admin Panel</span>
+              <Logo size="md" variant="dark" />
             </Link>
             <button onClick={() => setSidebarOpen(false)}>
               <X className="w-6 h-6" />
@@ -88,7 +89,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   className={cn(
                     'flex items-center space-x-3 px-3 py-2 rounded-lg mb-1 transition-colors',
                     pathname === item.href
-                      ? 'bg-red-600 text-white'
+                      ? 'bg-uber-green text-white'
                       : 'text-gray-600 hover:bg-gray-100'
                   )}
                   onClick={() => setSidebarOpen(false)}
@@ -105,11 +106,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Desktop sidebar */}
       <div className="hidden lg:fixed lg:left-0 lg:top-0 lg:h-full lg:w-64 lg:bg-white lg:shadow-sm lg:flex lg:flex-col">
         <div className="flex items-center p-6 border-b">
-          <Link href="/admin" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
+          <Link href="/driver" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-uber-green rounded-lg flex items-center justify-center">
+              <Car className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Admin Panel</span>
+            <Logo size="md" variant="dark" />
           </Link>
         </div>
         <nav className="flex-1 p-4">
@@ -122,7 +123,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 className={cn(
                   'flex items-center space-x-3 px-3 py-2 rounded-lg mb-1 transition-colors',
                   pathname === item.href
-                    ? 'bg-red-600 text-white'
+                    ? 'bg-uber-green text-white'
                     : 'text-gray-600 hover:bg-gray-100'
                 )}
               >
@@ -147,11 +148,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <Menu className="w-6 h-6" />
               </button>
               
+              {/* Search */}
               <div className="hidden md:flex items-center space-x-2 bg-gray-100 rounded-lg px-3 py-2 w-96">
                 <Search className="w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search users, bookings, drivers..."
+                  placeholder="Search rides, locations..."
                   className="bg-transparent outline-none flex-1"
                 />
               </div>
@@ -160,24 +162,24 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <div className="flex items-center space-x-4">
               <button className="p-2 rounded-lg hover:bg-gray-100 relative">
                 <Bell className="w-6 h-6 text-gray-600" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-uber-green rounded-full"></div>
               </button>
               
-              {/* Admin Profile Dropdown */}
+              {/* Profile Dropdown */}
               <div className="relative">
                 <button 
                   onClick={() => setProfileOpen(!profileOpen)}
                   className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-                    <Shield className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 bg-uber-green rounded-full flex items-center justify-center">
+                    <Car className="w-4 h-4 text-white" />
                   </div>
                   <div className="hidden md:block text-left">
                     <div className="text-sm font-medium text-gray-700">
-                      {user?.name || 'Admin'}
+                      {user?.name || 'Driver'}
                     </div>
-                    <div className="text-xs text-red-600">
-                      Administrator
+                    <div className="text-xs text-uber-green">
+                      Driver
                     </div>
                   </div>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -188,20 +190,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-50">
                     <div className="py-2">
                       <Link 
-                        href="/dashboard/profile" 
+                        href="/driver/profile" 
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         onClick={() => setProfileOpen(false)}
                       >
                         <User className="w-4 h-4 mr-3" />
-                        Admin Profile
+                        Driver Profile
                       </Link>
                       <Link 
-                        href="/admin/settings" 
+                        href="/driver/settings" 
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         onClick={() => setProfileOpen(false)}
                       >
                         <Settings className="w-4 h-4 mr-3" />
-                        System Settings
+                        Settings
                       </Link>
                       <hr className="my-1" />
                       <button
@@ -225,7 +227,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </main>
         
         {/* Footer */}
-        <AdminFooter />
+        <DriverFooter />
       </div>
     </div>
   )

@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils'
 import Button from '@/components/ui/Button'
 import Logo from '@/components/ui/Logo'
 import NotificationBell from '@/components/ui/NotificationBell'
+import UserFooter from '@/components/layout/UserFooter'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -220,9 +221,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="p-6">
+        <main className="p-6 pb-0">
           {children}
         </main>
+        
+        {/* Footer */}
+        <UserFooter />
       </div>
     </div>
   )
