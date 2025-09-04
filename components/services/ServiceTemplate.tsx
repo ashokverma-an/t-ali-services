@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Search, MapPin, Star, Phone, Clock } from 'lucide-react'
+import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import BookingModal from './BookingModal'
 import QuickActions from './QuickActions'
@@ -87,6 +88,14 @@ export default function ServiceTemplate({ category, providers }: ServiceTemplate
           </div>
 
           <div className="lg:col-span-3">
+            <div className="mb-6">
+              <Link href="/services/directory">
+                <Button size="lg" className="w-full sm:w-auto">
+                  🔍 Browse All Services Directory
+                </Button>
+              </Link>
+            </div>
+            
             <ServiceStats category={category.title} />
             
             <div className="flex justify-between items-center mb-6">
