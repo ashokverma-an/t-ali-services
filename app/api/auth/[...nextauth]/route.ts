@@ -1,7 +1,5 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import bcrypt from 'bcryptjs'
-import { connectToDatabase } from '@/lib/db/mongodb'
 
 const handler = NextAuth({
   providers: [
@@ -16,11 +14,14 @@ const handler = NextAuth({
           return null
         }
 
+        // Skip database auth during build
+        if (!process.env.MONGODB_URI) {
+          return null
+        }
+
         try {
-          // Skip database connection during build
-          if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
-            return null
-          }
+          const bcrypt = await import('bcryptjs')
+          const { connectToDatabase } = await import('@/lib/db/mongodb')
           
           const { db } = await connectToDatabase()
           const user = await db.collection('users').findOne({
