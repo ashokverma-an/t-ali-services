@@ -36,8 +36,8 @@ export default function VendorDashboard() {
     pendingPayouts: 0,
     monthlyRevenue: 0
   })
-  const [recentOrders, setRecentOrders] = useState([])
-  const [topProducts, setTopProducts] = useState([])
+  const [recentOrders, setRecentOrders] = useState<any[]>([])
+  const [topProducts, setTopProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

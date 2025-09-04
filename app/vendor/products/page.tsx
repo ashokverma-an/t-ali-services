@@ -22,8 +22,8 @@ import Input from '@/components/ui/Input'
 
 export default function VendorProducts() {
   const router = useRouter()
-  const [products, setProducts] = useState([])
-  const [filteredProducts, setFilteredProducts] = useState([])
+  const [products, setProducts] = useState<any[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [loading, setLoading] = useState(true)
@@ -112,7 +112,7 @@ export default function VendorProducts() {
 
     // Filter by search query
     if (searchQuery) {
-      filtered = filtered.filter(product => 
+      filtered = filtered.filter((product: any) => 
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.category.toLowerCase().includes(searchQuery.toLowerCase())
       )
@@ -120,7 +120,7 @@ export default function VendorProducts() {
 
     // Filter by status
     if (filterStatus !== 'all') {
-      filtered = filtered.filter(product => product.status === filterStatus)
+      filtered = filtered.filter((product: any) => product.status === filterStatus)
     }
 
     setFilteredProducts(filtered)
@@ -199,7 +199,7 @@ export default function VendorProducts() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Active Products</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {products.filter(p => p.status === 'active').length}
+                  {products.filter((p: any) => p.status === 'active').length}
                 </p>
               </div>
               <TrendingUp className="w-8 h-8 text-green-500" />
@@ -211,7 +211,7 @@ export default function VendorProducts() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Out of Stock</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {products.filter(p => p.status === 'out_of_stock').length}
+                  {products.filter((p: any) => p.status === 'out_of_stock').length}
                 </p>
               </div>
               <TrendingDown className="w-8 h-8 text-red-500" />
@@ -223,7 +223,7 @@ export default function VendorProducts() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Revenue</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  AED {products.reduce((sum, p) => sum + p.revenue, 0).toLocaleString()}
+                  AED {products.reduce((sum: number, p: any) => sum + p.revenue, 0).toLocaleString()}
                 </p>
               </div>
               <DollarSign className="w-8 h-8 text-green-500" />

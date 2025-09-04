@@ -11,6 +11,8 @@ export default function PackagesPage() {
   const router = useRouter()
   const [user, setUser] = useState(null)
   const [packages, setPackages] = useState<any[]>([])
+  const [showReceipt, setShowReceipt] = useState(false)
+  const [selectedPackage, setSelectedPackage] = useState<any>(null)
 
   useEffect(() => {
     const userData = localStorage.getItem('user')
@@ -30,7 +32,7 @@ export default function PackagesPage() {
         to: '456 Oak Ave', 
         date: '2024-01-15', 
         time: '3:45 PM', 
-        cost: '$12.50', 
+        cost: '₹249', 
         status: 'delivered',
         trackingId: 'PKG001',
         size: 'Small',
@@ -42,7 +44,7 @@ export default function PackagesPage() {
         to: '321 Elm Ave', 
         date: '2024-01-14', 
         time: '11:30 AM', 
-        cost: '$18.75', 
+        cost: '₹375', 
         status: 'in_transit',
         trackingId: 'PKG002',
         size: 'Medium',
@@ -54,7 +56,7 @@ export default function PackagesPage() {
         to: '777 Park Ave', 
         date: '2024-01-13', 
         time: '4:20 PM', 
-        cost: '$8.25', 
+        cost: '₹165', 
         status: 'cancelled',
         trackingId: 'PKG003',
         size: 'Small',
@@ -66,7 +68,7 @@ export default function PackagesPage() {
         to: '111 Second St', 
         date: '2024-01-12', 
         time: '9:15 AM', 
-        cost: '$25.00', 
+        cost: '₹499', 
         status: 'delivered',
         trackingId: 'PKG004',
         size: 'Large',
@@ -167,11 +169,30 @@ export default function PackagesPage() {
                     </Button>
                   )}
                   {pkg.status === 'delivered' && (
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedPackage(pkg)
+                        setShowReceipt(true)
+                      }}
+                    >
                       View Receipt
                     </Button>
                   )}
-                  <Button size="sm" variant="outline">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => {
+                      localStorage.setItem('packageTemplate', JSON.stringify({
+                        pickupAddress: pkg.from,
+                        deliveryAddress: pkg.to,
+                        packageSize: pkg.size.toLowerCase(),
+                        weight: pkg.weight.replace(' lbs', '').replace(' lb', '')
+                      }))
+                      router.push('/services/package')
+                    }}
+                  >
                     Send Similar
                   </Button>
                 </div>
@@ -179,6 +200,70 @@ export default function PackagesPage() {
             ))}
           </div>
         </div>
+        
+        {/* Receipt Modal */}
+        {showReceipt && selectedPackage && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Package className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Package Receipt</h3>
+                <p className="text-sm text-gray-600">#{selectedPackage.trackingId}</p>
+              </div>
+              
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">From:</span>
+                  <span className="font-medium">{selectedPackage.from}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">To:</span>
+                  <span className="font-medium">{selectedPackage.to}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Date:</span>
+                  <span className="font-medium">{selectedPackage.date}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Time:</span>
+                  <span className="font-medium">{selectedPackage.time}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Size:</span>
+                  <span className="font-medium">{selectedPackage.size}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Weight:</span>
+                  <span className="font-medium">{selectedPackage.weight}</span>
+                </div>
+                <div className="border-t pt-4 flex justify-between">
+                  <span className="font-semibold">Total Cost:</span>
+                  <span className="font-semibold text-lg">{selectedPackage.cost}</span>
+                </div>
+              </div>
+              
+              <div className="flex space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowReceipt(false)}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={() => {
+                    window.print()
+                  }}
+                  className="flex-1"
+                >
+                  Print Receipt
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   )

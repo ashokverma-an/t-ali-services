@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { MapPin, Navigation, Package, User, Phone, FileText, Scale } from 'lucide-react'
+import { MapPin, Navigation, Package, User, Phone, FileText, Scale, Locate } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import RealMapComponent from '@/components/maps/RealMapComponent'
+import { googleMapsService } from '@/lib/maps/GoogleMaps'
 
 export default function PackagePage() {
   const router = useRouter()
@@ -22,27 +24,30 @@ export default function PackagePage() {
   })
   const [loading, setLoading] = useState(false)
   const [estimate, setEstimate] = useState<any>(null)
+  const [pickupLocation, setPickupLocation] = useState<any>(null)
+  const [deliveryLocation, setDeliveryLocation] = useState<any>(null)
+  const [loadingLocation, setLoadingLocation] = useState(false)
 
   const packageSizes = [
     {
       id: 'small',
       name: 'Small',
       description: 'Up to 5 lbs, fits in a bag',
-      price: 8.99,
+      price: 149,
       dimensions: '12" x 12" x 6"'
     },
     {
       id: 'medium',
       name: 'Medium',
       description: 'Up to 20 lbs, small box',
-      price: 12.99,
+      price: 199,
       dimensions: '18" x 18" x 12"'
     },
     {
       id: 'large',
       name: 'Large',
       description: 'Up to 50 lbs, large box',
-      price: 18.99,
+      price: 299,
       dimensions: '24" x 24" x 18"'
     }
   ]
@@ -58,14 +63,46 @@ export default function PackagePage() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
+  const getCurrentLocation = async (type: 'pickup' | 'delivery') => {
+    setLoadingLocation(true)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          
+          try {
+            const address = await googleMapsService.reverseGeocode(coords)
+            if (type === 'pickup') {
+              setPickupLocation(coords)
+              handleInputChange('pickupAddress', address || `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`)
+            } else {
+              setDeliveryLocation(coords)
+              handleInputChange('deliveryAddress', address || `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`)
+            }
+          } catch (error) {
+            console.error('Geocoding error:', error)
+          }
+          setLoadingLocation(false)
+        },
+        (error) => {
+          console.error('Location error:', error)
+          setLoadingLocation(false)
+        }
+      )
+    }
+  }
+
   const calculateEstimate = () => {
     if (!formData.pickupAddress || !formData.deliveryAddress) return
 
     const selectedSize = packageSizes.find(size => size.id === formData.packageSize)
-    const basePrice = selectedSize?.price || 8.99
-    const fragileUpcharge = formData.fragile ? 3.00 : 0
-    const serviceFee = 2.50
-    const tax = (basePrice + fragileUpcharge) * 0.08
+    const basePrice = selectedSize?.price || 149
+    const fragileUpcharge = formData.fragile ? 50 : 0
+    const serviceFee = 49
+    const tax = (basePrice + fragileUpcharge) * 0.18
 
     setEstimate({
       basePrice,
@@ -150,14 +187,28 @@ export default function PackagePage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Pickup Address
                   </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-500" />
-                    <Input
-                      value={formData.pickupAddress}
-                      onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
-                      placeholder="Where should we pick up the package?"
-                      className="pl-12"
-                    />
+                  <div className="flex space-x-2">
+                    <div className="relative flex-1">
+                      <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-500" />
+                      <Input
+                        value={formData.pickupAddress}
+                        onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
+                        placeholder="Where should we pick up the package?"
+                        className="pl-12"
+                      />
+                    </div>
+                    <Button
+                      onClick={() => getCurrentLocation('pickup')}
+                      disabled={loadingLocation}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {loadingLocation ? (
+                        <div className="w-4 h-4 border-2 border-uber-green border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Locate className="w-4 h-4" />
+                      )}
+                    </Button>
                   </div>
                 </div>
 
@@ -165,16 +216,40 @@ export default function PackagePage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Delivery Address
                   </label>
-                  <div className="relative">
-                    <Navigation className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-red-500" />
-                    <Input
-                      value={formData.deliveryAddress}
-                      onChange={(e) => handleInputChange('deliveryAddress', e.target.value)}
-                      placeholder="Where should we deliver it?"
-                      className="pl-12"
-                    />
+                  <div className="flex space-x-2">
+                    <div className="relative flex-1">
+                      <Navigation className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-red-500" />
+                      <Input
+                        value={formData.deliveryAddress}
+                        onChange={(e) => handleInputChange('deliveryAddress', e.target.value)}
+                        placeholder="Where should we deliver it?"
+                        className="pl-12"
+                      />
+                    </div>
+                    <Button
+                      onClick={() => getCurrentLocation('delivery')}
+                      disabled={loadingLocation}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {loadingLocation ? (
+                        <div className="w-4 h-4 border-2 border-uber-green border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Locate className="w-4 h-4" />
+                      )}
+                    </Button>
                   </div>
                 </div>
+                
+                {(pickupLocation || deliveryLocation) && (
+                  <div className="mt-4 h-64 rounded-lg overflow-hidden">
+                    <RealMapComponent
+                      pickup={pickupLocation}
+                      destination={deliveryLocation}
+                      showRoute={!!(pickupLocation && deliveryLocation)}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Package Details */}
@@ -202,7 +277,7 @@ export default function PackagePage() {
                             <p className="text-sm text-gray-600">{size.description}</p>
                             <p className="text-xs text-gray-500 mt-1">{size.dimensions}</p>
                           </div>
-                          <span className="font-semibold text-gray-900">${size.price}</span>
+                          <span className="font-semibold text-gray-900">₹{size.price}</span>
                         </div>
                       </div>
                     ))}
@@ -234,7 +309,7 @@ export default function PackagePage() {
                         onChange={(e) => handleInputChange('fragile', e.target.checked)}
                         className="rounded border-gray-300 text-uber-green focus:ring-uber-green"
                       />
-                      <span className="text-sm font-medium text-gray-700">Fragile (+$3.00)</span>
+                      <span className="text-sm font-medium text-gray-700">Fragile (+₹50)</span>
                     </label>
                   </div>
                 </div>
@@ -285,7 +360,7 @@ export default function PackagePage() {
                       type="tel"
                       value={formData.recipientPhone}
                       onChange={(e) => handleInputChange('recipientPhone', e.target.value)}
-                      placeholder="+1 (555) 123-4567"
+                      placeholder="+91 98765 43210"
                       className="pl-12"
                     />
                   </div>
@@ -310,25 +385,25 @@ export default function PackagePage() {
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                       <span>Base price ({formData.packageSize})</span>
-                      <span>${estimate.basePrice.toFixed(2)}</span>
+                      <span>₹{estimate.basePrice}</span>
                     </div>
                     {formData.fragile && (
                       <div className="flex justify-between text-sm">
                         <span>Fragile handling</span>
-                        <span>${estimate.fragileUpcharge.toFixed(2)}</span>
+                        <span>₹{estimate.fragileUpcharge}</span>
                       </div>
                     )}
                     <div className="flex justify-between text-sm">
                       <span>Service fee</span>
-                      <span>${estimate.serviceFee.toFixed(2)}</span>
+                      <span>₹{estimate.serviceFee}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Tax</span>
-                      <span>${estimate.tax.toFixed(2)}</span>
+                      <span>₹{Math.round(estimate.tax)}</span>
                     </div>
                     <div className="border-t pt-3 flex justify-between font-semibold">
                       <span>Total</span>
-                      <span>${estimate.total.toFixed(2)}</span>
+                      <span>₹{Math.round(estimate.total)}</span>
                     </div>
                   </div>
 
