@@ -1,10 +1,6 @@
 import { MongoClient, Db } from 'mongodb'
 
-if (!process.env.MONGODB_URI) {
-  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"')
-}
-
-const uri = process.env.MONGODB_URI
+const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/tali_services'
 const options = {}
 
 let client: MongoClient
@@ -27,11 +23,17 @@ if (process.env.NODE_ENV === 'development') {
 
 export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
   try {
+    if (!process.env.MONGODB_URI && process.env.NODE_ENV === 'production') {
+      throw new Error('MongoDB URI not configured for production')
+    }
+    
     const client = await clientPromise
     const db = client.db('tali_services')
     
-    // Test connection
-    await db.admin().ping()
+    // Test connection only if URI is provided
+    if (process.env.MONGODB_URI) {
+      await db.admin().ping()
+    }
     
     return { client, db }
   } catch (error) {

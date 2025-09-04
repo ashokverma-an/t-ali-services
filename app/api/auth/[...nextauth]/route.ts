@@ -17,6 +17,11 @@ const handler = NextAuth({
         }
 
         try {
+          // Skip database connection during build
+          if (process.env.NODE_ENV === 'production' && !process.env.MONGODB_URI) {
+            return null
+          }
+          
           const { db } = await connectToDatabase()
           const user = await db.collection('users').findOne({
             email: credentials.email.toLowerCase()
