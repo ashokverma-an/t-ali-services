@@ -6,22 +6,24 @@ import Button from '@/components/ui/Button'
 import { bookingSystem } from '@/lib/realtime/BookingSystem'
 
 interface BookingModalProps {
-  isOpen: boolean
+  isOpen?: boolean
   onClose: () => void
-  provider: {
+  provider?: {
     name: string
     service: string
     price: string
     rating: number
   }
+  service?: any
 }
 
-export default function BookingModal({ isOpen, onClose, provider }: BookingModalProps) {
+export default function BookingModal({ isOpen = true, onClose, provider, service }: BookingModalProps) {
+  const serviceData = service || provider
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
   const [address, setAddress] = useState('')
 
-  if (!isOpen) return null
+  if (!isOpen || (!provider && !service)) return null
 
   const handleBooking = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}')
@@ -29,13 +31,13 @@ export default function BookingModal({ isOpen, onClose, provider }: BookingModal
     const booking = bookingSystem.createBooking({
       userId: user.id || Date.now().toString(),
       userName: user.name || 'Guest User',
-      service: provider.service,
+      service: serviceData.service || serviceData.name,
       pickup: address,
       destination: 'Service Location',
-      price: parseInt(provider.price.replace(/[^0-9]/g, '')) || 100
+      price: parseInt((serviceData.price || '100').replace(/[^0-9]/g, '')) || 100
     })
     
-    alert(`✅ Booking Confirmed!\n\nBooking ID: ${booking.id}\nService: ${provider.service}\nProvider: ${provider.name}\nDate: ${selectedDate}\nTime: ${selectedTime}\nStatus: Pending Driver Acceptance\n\n📱 Check Admin Panel & Driver Dashboard for real-time updates!`)
+    alert(`✅ Booking Confirmed!\n\nBooking ID: ${booking.id}\nService: ${serviceData.service || serviceData.name}\nProvider: ${serviceData.provider || serviceData.name}\nDate: ${selectedDate}\nTime: ${selectedTime}\nStatus: Pending Driver Acceptance\n\n📱 Check Admin Panel & Driver Dashboard for real-time updates!`)
     onClose()
   }
 
@@ -51,9 +53,9 @@ export default function BookingModal({ isOpen, onClose, provider }: BookingModal
 
         <div className="space-y-4">
           <div>
-            <h4 className="font-medium">{provider.name}</h4>
-            <p className="text-sm text-gray-600">{provider.service}</p>
-            <p className="text-uber-green font-semibold">{provider.price}</p>
+            <h4 className="font-medium">{serviceData.provider || serviceData.name}</h4>
+            <p className="text-sm text-gray-600">{serviceData.service || serviceData.name}</p>
+            <p className="text-uber-green font-semibold">{serviceData.price}</p>
           </div>
 
           <div>

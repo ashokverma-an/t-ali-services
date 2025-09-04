@@ -15,9 +15,9 @@ export default function BusinessRegister() {
     email: '',
     website: '',
     hours: '',
-    services: [],
+    services: [] as string[],
     pricing: '',
-    documents: []
+    documents: [] as string[]
   })
 
   const categories = [
