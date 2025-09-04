@@ -7,6 +7,7 @@ import DashboardOverview from '@/components/dashboard/DashboardOverview'
 import BookingManagement from '@/components/dashboard/BookingManagement'
 import UserManagement from '@/components/dashboard/UserManagement'
 import DriverDashboard from '@/components/dashboard/DriverDashboard'
+import LiveBookings from '@/components/realtime/LiveBookings'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { useTranslation } from '@/lib/useTranslation'
 
@@ -37,6 +38,7 @@ export default function DashboardPage() {
               <h1 className="text-3xl font-bold text-uber-black">Admin Dashboard</h1>
               <p className="text-gray-600 mt-2">Manage platform operations</p>
             </div>
+            <LiveBookings userRole="admin" />
             <UserManagement />
             <BookingManagement />
           </div>
@@ -48,6 +50,7 @@ export default function DashboardPage() {
               <h1 className="text-3xl font-bold text-uber-black">Driver Dashboard</h1>
               <p className="text-gray-600 mt-2">Welcome back, {user?.name}</p>
             </div>
+            <LiveBookings userRole="driver" userId={user?.id} />
             <DriverDashboard />
           </div>
         )
@@ -58,6 +61,7 @@ export default function DashboardPage() {
               <h1 className="text-3xl font-bold text-uber-black">Welcome, {user?.name}</h1>
               <p className="text-gray-600 mt-2">{t('dashboard.recent_activity')}</p>
             </div>
+            <LiveBookings userRole="user" userId={user?.id} />
             <BookingManagement />
             <Suspense fallback={<LoadingSpinner />}>
               <DashboardOverview />

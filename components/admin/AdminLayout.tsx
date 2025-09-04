@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
@@ -16,7 +16,10 @@ import {
   X,
   Bell,
   Search,
-  Shield
+  Shield,
+  LogOut,
+  User,
+  ChevronDown
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -26,7 +29,22 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
   const pathname = usePathname()
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user')
+    if (userData) {
+      setUser(JSON.parse(userData))
+    }
+  }, [])
+
+  const handleSignOut = () => {
+    localStorage.removeItem('user')
+    setUser(null)
+    window.location.href = '/'
+  }
 
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -144,8 +162,57 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
               </button>
               
-              <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-                <Shield className="w-4 h-4 text-white" />
+              {/* Admin Profile Dropdown */}
+              <div className="relative">
+                <button 
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="hidden md:block text-left">
+                    <div className="text-sm font-medium text-gray-700">
+                      {user?.name || 'Admin'}
+                    </div>
+                    <div className="text-xs text-red-600">
+                      Administrator
+                    </div>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                </button>
+                
+                {/* Dropdown Menu */}
+                {profileOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-50">
+                    <div className="py-2">
+                      <Link 
+                        href="/dashboard/profile" 
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setProfileOpen(false)}
+                      >
+                        <User className="w-4 h-4 mr-3" />
+                        Admin Profile
+                      </Link>
+                      <Link 
+                        href="/admin/settings" 
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setProfileOpen(false)}
+                      >
+                        <Settings className="w-4 h-4 mr-3" />
+                        System Settings
+                      </Link>
+                      <hr className="my-1" />
+                      <button
+                        onClick={handleSignOut}
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <LogOut className="w-4 h-4 mr-3" />
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { X, Calendar, Clock, MapPin, CreditCard } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import { bookingSystem } from '@/lib/realtime/BookingSystem'
 
 interface BookingModalProps {
   isOpen: boolean
@@ -23,7 +24,18 @@ export default function BookingModal({ isOpen, onClose, provider }: BookingModal
   if (!isOpen) return null
 
   const handleBooking = () => {
-    alert(`Booking confirmed with ${provider.name}!\nService: ${provider.service}\nDate: ${selectedDate}\nTime: ${selectedTime}`)
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    
+    const booking = bookingSystem.createBooking({
+      userId: user.id || Date.now().toString(),
+      userName: user.name || 'Guest User',
+      service: provider.service,
+      pickup: address,
+      destination: 'Service Location',
+      price: parseInt(provider.price.replace(/[^0-9]/g, '')) || 100
+    })
+    
+    alert(`✅ Booking Confirmed!\n\nBooking ID: ${booking.id}\nService: ${provider.service}\nProvider: ${provider.name}\nDate: ${selectedDate}\nTime: ${selectedTime}\nStatus: Pending Driver Acceptance\n\n📱 Check Admin Panel & Driver Dashboard for real-time updates!`)
     onClose()
   }
 

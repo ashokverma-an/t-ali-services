@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import AdminLayout from '@/components/admin/AdminLayout'
 import AdminDashboard from '@/components/admin/AdminDashboard'
+import LiveBookings from '@/components/realtime/LiveBookings'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
 export default function AdminPage() {
@@ -36,6 +37,10 @@ export default function AdminPage() {
           <p className="text-gray-600 mt-2">
             Manage your platform operations and monitor key metrics
           </p>
+        </div>
+        
+        <div className="mb-8">
+          <LiveBookings userRole="admin" />
         </div>
         
         <Suspense fallback={<LoadingSpinner />}>

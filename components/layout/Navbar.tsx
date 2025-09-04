@@ -123,6 +123,14 @@ export default function Navbar() {
                         </Link>
                       )}
                       <Link 
+                        href="/driver" 
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setProfileOpen(false)}
+                      >
+                        <Car className="w-4 h-4 mr-3" />
+                        Driver Mode
+                      </Link>
+                      <Link 
                         href="/chat" 
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         onClick={() => setProfileOpen(false)}
