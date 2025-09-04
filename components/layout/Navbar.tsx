@@ -51,6 +51,9 @@ export default function Navbar() {
             <Link href="/services/package" className="text-gray-600 hover:text-uber-black transition-colors">
               {t('nav.package')}
             </Link>
+            <Link href="/services/all" className="text-uber-green hover:text-uber-black transition-colors font-medium">
+              All Services
+            </Link>
             <Link href="/business" className="text-gray-600 hover:text-uber-black transition-colors">
               {t('nav.business')}
             </Link>
@@ -162,6 +165,10 @@ export default function Navbar() {
             <Link href="/services/package" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50">
               <Package className="w-5 h-5 text-gray-600" />
               <span>Package</span>
+            </Link>
+            <Link href="/services/all" className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 bg-uber-green/10">
+              <div className="w-5 h-5 text-uber-green font-bold flex items-center justify-center">🏪</div>
+              <span className="font-medium text-uber-green">All Services</span>
             </Link>
             
             {user ? (
