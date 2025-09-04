@@ -19,7 +19,8 @@ import {
   Plus,
   Eye,
   Edit,
-  BarChart3
+  BarChart3,
+  CreditCard
 } from 'lucide-react'
 import Button from '@/components/ui/Button'
 
@@ -327,6 +328,13 @@ export default function VendorDashboard() {
                   <Button variant="outline" className="w-full justify-start">
                     <BarChart3 className="w-4 h-4 mr-2" />
                     View Analytics
+                  </Button>
+                </Link>
+                
+                <Link href="/vendor/payments">
+                  <Button variant="outline" className="w-full justify-start">
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Payment Management
                   </Button>
                 </Link>
                 
