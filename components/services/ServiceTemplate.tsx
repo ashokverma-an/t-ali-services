@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { Search, MapPin, Star, Phone, Clock } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import BookingModal from './BookingModal'
+import QuickActions from './QuickActions'
+import ServiceStats from './ServiceStats'
 
 interface ServiceTemplateProps {
   category: {
@@ -26,6 +29,7 @@ interface ServiceTemplateProps {
 export default function ServiceTemplate({ category, providers }: ServiceTemplateProps) {
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [bookingModal, setBookingModal] = useState<any>(null)
 
   const filteredProviders = providers.filter(provider => 
     (!selectedService || provider.service === selectedService) &&
@@ -83,6 +87,8 @@ export default function ServiceTemplate({ category, providers }: ServiceTemplate
           </div>
 
           <div className="lg:col-span-3">
+            <ServiceStats category={category.title} />
+            
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">Available Providers ({filteredProviders.length})</h2>
             </div>
@@ -116,17 +122,19 @@ export default function ServiceTemplate({ category, providers }: ServiceTemplate
                         </div>
                       </div>
                       
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-3">
                         <span className="text-lg font-semibold text-uber-green">{provider.price}</span>
-                        <div className="flex space-x-2">
-                          <Button size="sm" variant="outline">
-                            <Phone className="w-4 h-4 mr-1" />
-                            Call
-                          </Button>
-                          <Button size="sm" disabled={!provider.available}>
-                            Book Now
-                          </Button>
-                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <QuickActions provider={provider} />
+                        <Button 
+                          size="sm" 
+                          disabled={!provider.available}
+                          onClick={() => setBookingModal(provider)}
+                        >
+                          Book Now
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -136,6 +144,12 @@ export default function ServiceTemplate({ category, providers }: ServiceTemplate
           </div>
         </div>
       </div>
+      
+      <BookingModal
+        isOpen={!!bookingModal}
+        onClose={() => setBookingModal(null)}
+        provider={bookingModal || {}}
+      />
     </div>
   )
 }
