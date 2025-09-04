@@ -41,13 +41,27 @@ export default function VendorDashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const vendorData = localStorage.getItem('vendor')
-    if (vendorData) {
-      const parsedVendor = JSON.parse(vendorData)
-      setVendor(parsedVendor)
-      loadDashboardData(parsedVendor._id)
+    const userData = localStorage.getItem('user')
+    if (userData) {
+      const parsedUser = JSON.parse(userData)
+      if (parsedUser.role === 'vendor') {
+        setVendor({
+          businessName: 'Demo Restaurant',
+          email: parsedUser.email,
+          phone: '+971 50 123 4567',
+          businessType: 'Restaurant',
+          address: {
+            area: 'Dubai Marina',
+            city: 'Dubai'
+          },
+          _id: 'vendor-demo-001'
+        })
+        loadDashboardData('vendor-demo-001')
+      } else {
+        router.push('/auth/signin')
+      }
     } else {
-      router.push('/vendor/auth/signin')
+      router.push('/auth/signin')
     }
   }, [router])
 

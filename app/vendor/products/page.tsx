@@ -29,8 +29,18 @@ export default function VendorProducts() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadProducts()
-  }, [])
+    const userData = localStorage.getItem('user')
+    if (userData) {
+      const parsedUser = JSON.parse(userData)
+      if (parsedUser.role === 'vendor') {
+        loadProducts()
+      } else {
+        router.push('/auth/signin')
+      }
+    } else {
+      router.push('/auth/signin')
+    }
+  }, [router])
 
   useEffect(() => {
     filterProducts()
