@@ -7,6 +7,7 @@ import ErrorBoundary from '@/components/ui/ErrorBoundary'
 import ConnectionStatus from '@/components/ui/ConnectionStatus'
 import Footer from '@/components/layout/Footer'
 import AdminFooter from '@/components/layout/AdminFooter'
+import PortalFooter from '@/components/layout/PortalFooter'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -47,9 +48,16 @@ function ConditionalFooter() {
   if (typeof window !== 'undefined') {
     const isAdmin = window.location.pathname.startsWith('/admin')
     const isLanding = window.location.pathname === '/'
+    const isPortal = window.location.pathname.startsWith('/dashboard') || 
+                    window.location.pathname.startsWith('/driver') || 
+                    window.location.pathname.startsWith('/services') ||
+                    window.location.pathname.startsWith('/chat') ||
+                    window.location.pathname.startsWith('/profile') ||
+                    window.location.pathname.startsWith('/notifications')
     
     if (isAdmin) return <AdminFooter />
     if (isLanding) return null
+    if (isPortal) return <PortalFooter />
     return <Footer />
   }
   return <Footer />
