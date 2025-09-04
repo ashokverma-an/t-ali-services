@@ -84,7 +84,7 @@ export default function TrackRide() {
       rideId={rideDetails.id}
       pickup={rideDetails.pickup}
       destination={rideDetails.destination}
-      driverLocation={driverLocation}
+      driverLocation={driverLocation || undefined}
       driverInfo={driverInfo}
       status={status}
       estimatedTime={estimatedTime}
