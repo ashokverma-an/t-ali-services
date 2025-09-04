@@ -22,7 +22,7 @@ import {
   ChevronDown
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import AdminFooter from '@/components/layout/AdminFooter'
+
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -137,50 +137,50 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main content */}
       <div className="lg:ml-64">
         {/* Top bar */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="flex items-center justify-between px-4 py-4">
-            <div className="flex items-center space-x-4">
+        <header className="bg-white shadow-sm border-b sticky top-0 z-40">
+          <div className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 touch-manipulation"
               >
-                <Menu className="w-6 h-6" />
+                <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
               
-              <div className="hidden md:flex items-center space-x-2 bg-gray-100 rounded-lg px-3 py-2 w-96">
-                <Search className="w-5 h-5 text-gray-400" />
+              <div className="hidden md:flex items-center space-x-2 bg-gray-100 rounded-lg px-3 py-2 w-64 lg:w-96">
+                <Search className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search users, bookings, drivers..."
-                  className="bg-transparent outline-none flex-1"
+                  className="bg-transparent outline-none flex-1 text-sm"
                 />
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <button className="p-2 rounded-lg hover:bg-gray-100 relative">
-                <Bell className="w-6 h-6 text-gray-600" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <button className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 relative touch-manipulation">
+                <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
+                <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
               </button>
               
               {/* Admin Profile Dropdown */}
               <div className="relative">
                 <button 
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center space-x-1 sm:space-x-2 p-1.5 sm:p-2 rounded-lg hover:bg-gray-50 transition-colors touch-manipulation"
                 >
-                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-                    <Shield className="w-4 h-4 text-white" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-red-600 rounded-full flex items-center justify-center">
+                    <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   </div>
-                  <div className="hidden md:block text-left">
-                    <div className="text-sm font-medium text-gray-700">
+                  <div className="hidden sm:block text-left">
+                    <div className="text-xs sm:text-sm font-medium text-gray-700 truncate max-w-20">
                       {user?.name || 'Admin'}
                     </div>
                     <div className="text-xs text-red-600">
                       Administrator
                     </div>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                  <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
                 </button>
                 
                 {/* Dropdown Menu */}
@@ -220,12 +220,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="p-6 pb-0">
+        <main className="p-3 sm:p-4 lg:p-6">
           {children}
         </main>
-        
-        {/* Footer */}
-        <AdminFooter />
       </div>
     </div>
   )
