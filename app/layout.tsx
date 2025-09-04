@@ -6,6 +6,7 @@ import ToastContainer from '@/components/ui/Toast'
 import ErrorBoundary from '@/components/ui/ErrorBoundary'
 import ConnectionStatus from '@/components/ui/ConnectionStatus'
 import Footer from '@/components/layout/Footer'
+import AdminFooter from '@/components/layout/AdminFooter'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,10 +28,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <ErrorBoundary>
           <AuthProvider>
-            <main className="min-h-screen">
-              {children}
-            </main>
-            <Footer />
+            <div className="min-h-screen flex flex-col">
+              <main className="flex-1">
+                {children}
+              </main>
+              <ConditionalFooter />
+            </div>
             <ToastContainer />
             <ConnectionStatus />
           </AuthProvider>
@@ -38,4 +41,16 @@ export default function RootLayout({
       </body>
     </html>
   )
+}
+
+function ConditionalFooter() {
+  if (typeof window !== 'undefined') {
+    const isAdmin = window.location.pathname.startsWith('/admin')
+    const isLanding = window.location.pathname === '/'
+    
+    if (isAdmin) return <AdminFooter />
+    if (isLanding) return null
+    return <Footer />
+  }
+  return <Footer />
 }

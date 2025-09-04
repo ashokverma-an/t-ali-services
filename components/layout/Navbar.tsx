@@ -51,9 +51,22 @@ export default function Navbar() {
             <Link href="/services/package" className="text-gray-600 hover:text-uber-black transition-colors">
               {t('nav.package')}
             </Link>
-            <Link href="/services/all" className="text-uber-green hover:text-uber-black transition-colors font-medium">
-              All Services
-            </Link>
+            <div className="relative group">
+              <Link href="/services/all" className="text-uber-green hover:text-uber-black transition-colors font-medium">
+                All Services
+              </Link>
+              <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <div className="p-4 space-y-2">
+                  <Link href="/services/professional" className="block text-sm text-gray-700 hover:text-uber-green">💼 Professional Services</Link>
+                  <Link href="/services/home" className="block text-sm text-gray-700 hover:text-uber-green">🏠 Home Services</Link>
+                  <Link href="/services/beauty" className="block text-sm text-gray-700 hover:text-uber-green">💇 Beauty & Personal Care</Link>
+                  <Link href="/services/medical" className="block text-sm text-gray-700 hover:text-uber-green">🏥 Health & Medical</Link>
+                  <Link href="/services/automotive" className="block text-sm text-gray-700 hover:text-uber-green">🚗 Automotive</Link>
+                  <Link href="/services/retail" className="block text-sm text-gray-700 hover:text-uber-green">🛍️ Retail & Shopping</Link>
+                  <Link href="/services/realestate" className="block text-sm text-gray-700 hover:text-uber-green">🏢 Real Estate</Link>
+                </div>
+              </div>
+            </div>
             <Link href="/business" className="text-gray-600 hover:text-uber-black transition-colors">
               {t('nav.business')}
             </Link>
