@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Car, UtensilsCrossed, Package, Clock, Shield, Star } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import { useTranslation } from '@/lib/useTranslation'
@@ -113,12 +114,14 @@ export default function Services() {
                     ))}
                   </ul>
 
-                  <Button 
-                    className="w-full uber-button"
-                    variant="outline"
-                  >
-                    {t('common.get_started')}
-                  </Button>
+                  <Link href={service.id === 'ride' ? '/ride/book' : `/services/${service.id}`}>
+                    <Button 
+                      className="w-full uber-button"
+                      variant="outline"
+                    >
+                      {t('common.get_started')}
+                    </Button>
+                  </Link>
                 </div>
               </motion.div>
             )

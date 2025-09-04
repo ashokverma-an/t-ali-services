@@ -122,6 +122,27 @@ class GoogleMapsService {
     })
   }
 
+  async geocodeAddress(address: string): Promise<Location | null> {
+    return new Promise((resolve) => {
+      const geocoder = new window.google.maps.Geocoder()
+      geocoder.geocode(
+        { address: address },
+        (results: any[], status: string) => {
+          if (status === 'OK' && results[0]) {
+            const location = results[0].geometry.location
+            resolve({
+              lat: location.lat(),
+              lng: location.lng(),
+              address: results[0].formatted_address
+            })
+          } else {
+            resolve(null)
+          }
+        }
+      )
+    })
+  }
+
   async searchPlaces(query: string, location?: Location): Promise<Place[]> {
     return new Promise((resolve) => {
       if (!this.autocompleteService) {

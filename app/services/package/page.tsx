@@ -51,8 +51,6 @@ export default function PackagePage() {
     const userData = localStorage.getItem('user')
     if (userData) {
       setUser(JSON.parse(userData))
-    } else {
-      router.push('/auth/signin')
     }
   }, [router])
 
@@ -357,11 +355,11 @@ export default function PackagePage() {
                   </div>
 
                   <Button
-                    onClick={handleSendPackage}
+                    onClick={user ? handleSendPackage : () => router.push('/auth/signin')}
                     disabled={loading || !formData.recipientName || !formData.recipientPhone}
                     className="w-full mt-6"
                   >
-                    {loading ? 'Booking...' : 'Send Package'}
+                    {loading ? 'Booking...' : user ? 'Send Package' : 'Sign In to Send'}
                   </Button>
                 </div>
               )}

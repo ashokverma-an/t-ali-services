@@ -9,6 +9,7 @@ import RealMapComponent from '@/components/maps/RealMapComponent'
 import ChatButton from '@/components/chat/ChatButton'
 import PaymentModal from '@/components/booking/PaymentModal'
 import OTPModal from '@/components/booking/OTPModal'
+import { googleMapsService } from '@/lib/maps/GoogleMaps'
 import { toast } from '@/lib/toast'
 
 export default function RidePage() {
@@ -90,13 +91,8 @@ export default function RidePage() {
 
   const reverseGeocode = async (coords: any, setter: any) => {
     try {
-      const response = await fetch(
-        `https://api.opencagedata.com/geocode/v1/json?q=${coords.lat}+${coords.lng}&key=YOUR_API_KEY`
-      )
-      const data = await response.json()
-      if (data.results && data.results[0]) {
-        setter(data.results[0].formatted)
-      }
+      const address = await googleMapsService.reverseGeocode(coords)
+      setter(address || `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`)
     } catch (error) {
       console.error('Geocoding error:', error)
       setter(`${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`)
@@ -105,20 +101,12 @@ export default function RidePage() {
 
   const geocodeAddress = async (address: string) => {
     try {
-      const response = await fetch(
-        `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=YOUR_API_KEY`
-      )
-      const data = await response.json()
-      if (data.results && data.results[0]) {
-        return {
-          lat: data.results[0].geometry.lat,
-          lng: data.results[0].geometry.lng
-        }
-      }
+      const result = await googleMapsService.geocodeAddress(address)
+      return result
     } catch (error) {
       console.error('Geocoding error:', error)
+      return null
     }
-    return null
   }
 
   const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {

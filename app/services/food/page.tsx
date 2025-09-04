@@ -63,8 +63,6 @@ export default function FoodPage() {
     const userData = localStorage.getItem('user')
     if (userData) {
       setUser(JSON.parse(userData))
-    } else {
-      router.push('/auth/signin')
     }
   }, [router])
 
@@ -152,13 +150,8 @@ export default function FoodPage() {
     }
   }
 
-  if (!user) {
-    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-uber-green mx-auto mb-4"></div>
-        <p>Loading...</p>
-      </div>
-    </div>
+  const handleAuthRequired = () => {
+    router.push('/auth/signin')
   }
 
   if (selectedRestaurant) {
@@ -290,11 +283,11 @@ export default function FoodPage() {
                     </div>
 
                     <Button
-                      onClick={handlePlaceOrder}
+                      onClick={user ? handlePlaceOrder : handleAuthRequired}
                       disabled={loading || !deliveryAddress}
                       className="w-full mt-4"
                     >
-                      {loading ? 'Placing Order...' : 'Place Order'}
+                      {loading ? 'Placing Order...' : user ? 'Place Order' : 'Sign In to Order'}
                     </Button>
                   </>
                 ) : (
