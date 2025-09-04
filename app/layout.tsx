@@ -55,7 +55,7 @@ function ConditionalFooter() {
     const isDriver = pathname.startsWith('/driver')
     const isUser = pathname.startsWith('/dashboard')
     
-    // Don't show footer on landing page or auth pages
+    // Don't show footer on landing page (has its own) or auth pages
     if (isLanding || isAuth) return null
     
     // Show role-specific footers for logged-in areas

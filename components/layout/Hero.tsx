@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { MapPin, Search, ArrowRight, Car, UtensilsCrossed, Package } from 'lucide-react'
 import Button from '@/components/ui/Button'
@@ -19,9 +20,17 @@ export default function Hero() {
     { id: 'package', name: t('nav.package'), icon: Package, color: 'bg-blue-500' },
   ]
 
-  const handleSearch = () => {
-    // Handle search logic
-    console.log('Searching for:', { activeService, pickup, destination })
+  const getSearchLink = () => {
+    switch (activeService) {
+      case 'ride':
+        return '/ride/book'
+      case 'food':
+        return '/services/food'
+      case 'package':
+        return '/services/package'
+      default:
+        return '/services/ride'
+    }
   }
 
   return (
@@ -111,16 +120,17 @@ export default function Hero() {
                 )}
               </div>
 
-              <Button
-                onClick={handleSearch}
-                className="w-full h-14 text-lg font-semibold uber-button"
-                size="lg"
-              >
-                {activeService === 'ride' ? t('hero.request_ride') :
-                 activeService === 'food' ? t('hero.find_food') :
-                 t('hero.send_package')}
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+              <Link href={getSearchLink()}>
+                <Button
+                  className="w-full h-14 text-lg font-semibold uber-button"
+                  size="lg"
+                >
+                  {activeService === 'ride' ? t('hero.request_ride') :
+                   activeService === 'food' ? t('hero.find_food') :
+                   t('hero.send_package')}
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
             </motion.div>
 
             {/* Stats */}

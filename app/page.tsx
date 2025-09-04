@@ -5,6 +5,7 @@ import Hero from '@/components/layout/Hero'
 import Services from '@/components/layout/Services'
 import Features from '@/components/layout/Features'
 import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { useTranslation } from '@/lib/useTranslation'
 
@@ -30,6 +31,7 @@ export default function HomePage() {
         <Services />
         <Features />
       </Suspense>
+      <Footer />
     </main>
   )
 }
