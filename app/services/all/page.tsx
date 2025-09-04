@@ -1,100 +1,44 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, MapPin, Star, Clock, Phone, Globe, ChevronRight } from 'lucide-react'
+import { Search, MapPin, Star, Clock, Phone, Calendar, ShoppingCart, ChevronRight, User } from 'lucide-react'
 import Button from '@/components/ui/Button'
-
-const serviceCategories = [
-  {
-    icon: '💼',
-    title: 'Professional Services',
-    services: ['Legal Services / Lawyers', 'Accounting & Bookkeeping', 'Financial Advisors', 'Consulting Services', 'Marketing & Advertising', 'IT & Tech Support']
-  },
-  {
-    icon: '🛍️',
-    title: 'Retail & Shopping',
-    services: ['Clothing & Accessories', 'Electronics', 'Furniture & Home Decor', 'Grocery Stores', 'Jewelry', 'Bookstores']
-  },
-  {
-    icon: '🍽️',
-    title: 'Food & Drink',
-    services: ['Restaurants', 'Cafés & Coffee Shops', 'Bars & Pubs', 'Bakeries', 'Catering Services', 'Food Trucks']
-  },
-  {
-    icon: '🏠',
-    title: 'Home Services',
-    services: ['Plumbing', 'Electrical', 'Roofing', 'Cleaning Services', 'Landscaping & Gardening', 'Pest Control']
-  },
-  {
-    icon: '🏢',
-    title: 'Real Estate & Property',
-    services: ['Real Estate Agents', 'Property Management', 'Rental Services', 'Construction & Renovation', 'Architecture & Interior Design']
-  },
-  {
-    icon: '🚗',
-    title: 'Automotive',
-    services: ['Car Dealerships', 'Auto Repair & Maintenance', 'Car Wash & Detailing', 'Auto Parts & Accessories', 'Towing Services']
-  },
-  {
-    icon: '💇',
-    title: 'Beauty & Personal Care',
-    services: ['Hair Salons', 'Nail Salons', 'Spas & Massage', 'Skincare Clinics', 'Barbershops']
-  },
-  {
-    icon: '🏋️',
-    title: 'Health & Fitness',
-    services: ['Gyms & Fitness Centers', 'Yoga Studios', 'Personal Trainers', 'Nutritionists', 'Sports Clubs']
-  },
-  {
-    icon: '🏥',
-    title: 'Health & Medical',
-    services: ['Hospitals & Clinics', 'Dentists', 'Optometrists', 'Chiropractors', 'Pharmacies', 'Therapists & Counselors']
-  },
-  {
-    icon: '🧒',
-    title: 'Education & Childcare',
-    services: ['Schools & Colleges', 'Tutors', 'Daycare Centers', 'Learning Centers', 'Driving Schools']
-  },
-  {
-    icon: '📦',
-    title: 'Logistics & Transportation',
-    services: ['Courier Services', 'Moving Companies', 'Freight & Shipping', 'Taxi & Ride Services']
-  },
-  {
-    icon: '🎉',
-    title: 'Events & Entertainment',
-    services: ['Event Planners', 'DJs & Bands', 'Photography & Videography', 'Party Rentals', 'Wedding Services']
-  },
-  {
-    icon: '📸',
-    title: 'Media & Creative Services',
-    services: ['Graphic Design', 'Photography Studios', 'Video Production', 'Printing Services', 'Web Design & Development']
-  },
-  {
-    icon: '🐾',
-    title: 'Pets & Animals',
-    services: ['Veterinary Clinics', 'Pet Grooming', 'Pet Stores', 'Dog Training', 'Pet Sitting & Boarding']
-  }
-]
+import { serviceCategories } from '@/lib/data/services'
+import { useRouter } from 'next/navigation'
 
 const mockProviders = [
-  { id: 1, name: 'Dubai Legal Associates', category: 'Legal Services', rating: 4.8, reviews: 156, distance: '2.1 km', price: 'AED 500/hr' },
-  { id: 2, name: 'TechFix Solutions', category: 'IT Support', rating: 4.9, reviews: 203, distance: '1.5 km', price: 'AED 200/visit' },
-  { id: 3, name: 'Elite Cleaning Co.', category: 'Cleaning Services', rating: 4.7, reviews: 89, distance: '3.2 km', price: 'AED 150/hr' },
-  { id: 4, name: 'Wellness Spa Dubai', category: 'Spas & Massage', rating: 4.9, reviews: 312, distance: '1.8 km', price: 'AED 300/session' },
-  { id: 5, name: 'Prime Fitness Center', category: 'Gyms', rating: 4.6, reviews: 445, distance: '2.5 km', price: 'AED 200/month' },
-  { id: 6, name: 'Dubai Dental Clinic', category: 'Dentists', rating: 4.8, reviews: 178, distance: '1.2 km', price: 'AED 250/visit' }
+  { id: 1, name: 'Dubai Medical Center', category: 'Hospitals & Clinics', type: 'medical', rating: 4.8, reviews: 156, distance: '2.1 km', price: '₹300/visit', speciality: 'General Medicine' },
+  { id: 2, name: 'Al Zahra Hospital', category: 'Hospitals & Clinics', type: 'medical', rating: 4.9, reviews: 203, distance: '1.5 km', price: '₹500/visit', speciality: 'Cardiology' },
+  { id: 3, name: 'Dubai Dental Clinic', category: 'Dentists', type: 'medical', rating: 4.7, reviews: 89, distance: '3.2 km', price: '₹250/visit', speciality: 'Dental Care' },
+  { id: 4, name: 'Spice Route Restaurant', category: 'Restaurants', type: 'food', rating: 4.9, reviews: 312, distance: '1.8 km', price: '₹25-50/dish', cuisine: 'Indian' },
+  { id: 5, name: 'Dubai Cafe', category: 'Cafés & Coffee Shops', type: 'food', rating: 4.6, reviews: 445, distance: '2.5 km', price: '₹15-30/item', cuisine: 'Coffee & Snacks' },
+  { id: 6, name: 'Elite Cleaning Co.', category: 'Cleaning Services', type: 'service', rating: 4.8, reviews: 178, distance: '1.2 km', price: '₹150/hr', speciality: 'Home Cleaning' }
 ]
 
 export default function AllServicesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showBookingModal, setShowBookingModal] = useState(false)
+  const [selectedProvider, setSelectedProvider] = useState<any>(null)
+  const [bookingStep, setBookingStep] = useState(1)
+  const router = useRouter()
 
   const filteredProviders = mockProviders.filter(provider => 
     (!selectedCategory || provider.category.toLowerCase().includes(selectedCategory.toLowerCase())) &&
     (!searchQuery || provider.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
      provider.category.toLowerCase().includes(searchQuery.toLowerCase()))
   )
+
+  const handleBooking = (provider: any) => {
+    setSelectedProvider(provider)
+    setShowBookingModal(true)
+    setBookingStep(1)
+  }
+
+  const handleFinalBooking = () => {
+    setShowBookingModal(false)
+    router.push('/auth/signin?redirect=/services/all')
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -137,16 +81,16 @@ export default function AllServicesPage() {
                 >
                   All Services
                 </button>
-                {serviceCategories.map((category) => (
+                {Object.entries(serviceCategories).map(([key, category]) => (
                   <button
-                    key={category.title}
-                    onClick={() => setSelectedCategory(category.title)}
+                    key={key}
+                    onClick={() => setSelectedCategory(category.title.substring(category.title.indexOf(' ') + 1))}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center ${
-                      selectedCategory === category.title ? 'bg-uber-green text-white' : 'hover:bg-gray-100'
+                      selectedCategory === category.title.substring(category.title.indexOf(' ') + 1) ? 'bg-uber-green text-white' : 'hover:bg-gray-100'
                     }`}
                   >
-                    <span className="mr-2">{category.icon}</span>
-                    <span className="text-sm">{category.title}</span>
+                    <span className="mr-2">{category.title.split(' ')[0]}</span>
+                    <span className="text-sm">{category.title.substring(category.title.indexOf(' ') + 1)}</span>
                   </button>
                 ))}
               </div>
@@ -158,17 +102,17 @@ export default function AllServicesPage() {
             {!selectedCategory ? (
               /* Category Grid */
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {serviceCategories.map((category) => (
-                  <div key={category.title} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+                {Object.entries(serviceCategories).map(([key, category]) => (
+                  <div key={key} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
                     <div className="flex items-center mb-4">
-                      <span className="text-3xl mr-3">{category.icon}</span>
-                      <h3 className="text-xl font-semibold text-gray-900">{category.title}</h3>
+                      <span className="text-3xl mr-3">{category.title.split(' ')[0]}</span>
+                      <h3 className="text-xl font-semibold text-gray-900">{category.title.substring(category.title.indexOf(' ') + 1)}</h3>
                     </div>
                     <div className="space-y-2">
                       {category.services.slice(0, 4).map((service) => (
-                        <div key={service} className="flex items-center text-gray-600">
+                        <div key={service.id} className="flex items-center text-gray-600">
                           <ChevronRight className="w-4 h-4 mr-2 text-uber-green" />
-                          <span className="text-sm">{service}</span>
+                          <span className="text-sm">{service.name}</span>
                         </div>
                       ))}
                       {category.services.length > 4 && (
@@ -180,7 +124,7 @@ export default function AllServicesPage() {
                     <Button 
                       className="w-full mt-4" 
                       variant="outline"
-                      onClick={() => setSelectedCategory(category.title)}
+                      onClick={() => setSelectedCategory(category.title.substring(category.title.indexOf(' ') + 1))}
                     >
                       View All Services
                     </Button>
@@ -192,7 +136,7 @@ export default function AllServicesPage() {
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {serviceCategories.find(cat => cat.title === selectedCategory)?.icon} {selectedCategory}
+                    {Object.values(serviceCategories).find(cat => cat.title.substring(cat.title.indexOf(' ') + 1) === selectedCategory)?.title.split(' ')[0]} {selectedCategory}
                   </h2>
                   <Button variant="outline" onClick={() => setSelectedCategory(null)}>
                     View All Categories
@@ -201,12 +145,16 @@ export default function AllServicesPage() {
 
                 {/* Services List */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                  {serviceCategories.find(cat => cat.title === selectedCategory)?.services.map((service) => (
-                    <div key={service} className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                      <div className="flex items-center">
-                        <ChevronRight className="w-5 h-5 mr-2 text-uber-green" />
-                        <span className="font-medium text-gray-900">{service}</span>
+                  {Object.values(serviceCategories).find(cat => cat.title.substring(cat.title.indexOf(' ') + 1) === selectedCategory)?.services.map((service) => (
+                    <div key={service.id} className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <ChevronRight className="w-5 h-5 mr-2 text-uber-green" />
+                          <span className="font-medium text-gray-900">{service.name}</span>
+                        </div>
+                        <span className="text-sm text-green-600 font-medium">{service.price}</span>
                       </div>
+                      <p className="text-xs text-gray-500 mt-1 ml-7">{service.description}</p>
                     </div>
                   ))}
                 </div>
@@ -220,10 +168,13 @@ export default function AllServicesPage() {
                 {filteredProviders.map((provider) => (
                   <div key={provider.id} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
                     <div className="flex items-start space-x-4">
-                      <div className="w-16 h-16 bg-gray-200 rounded-lg flex-shrink-0"></div>
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex-shrink-0 flex items-center justify-center">
+                        {provider.type === 'medical' ? '🏥' : provider.type === 'food' ? '🍽️' : '🔧'}
+                      </div>
                       <div className="flex-1">
                         <h4 className="font-semibold text-gray-900">{provider.name}</h4>
-                        <p className="text-sm text-gray-600 mb-2">{provider.category}</p>
+                        <p className="text-sm text-gray-600 mb-1">{provider.category}</p>
+                        <p className="text-xs text-blue-600 mb-2">{provider.speciality || provider.cuisine}</p>
                         
                         <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
                           <div className="flex items-center">
@@ -237,12 +188,20 @@ export default function AllServicesPage() {
                         </div>
                         
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-uber-green">{provider.price}</span>
+                          <span className="font-semibold text-green-600">{provider.price}</span>
                           <div className="flex space-x-2">
                             <Button size="sm" variant="outline">
                               <Phone className="w-4 h-4" />
                             </Button>
-                            <Button size="sm">Book Now</Button>
+                            <Button size="sm" onClick={() => handleBooking(provider)}>
+                              {provider.type === 'medical' ? (
+                                <><Calendar className="w-4 h-4 mr-1" />Book Appointment</>
+                              ) : provider.type === 'food' ? (
+                                <><ShoppingCart className="w-4 h-4 mr-1" />Order Now</>
+                              ) : (
+                                'Book Now'
+                              )}
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -251,6 +210,102 @@ export default function AllServicesPage() {
                 ))}
               </div>
             </div>
+
+            {/* Booking Modal */}
+            {showBookingModal && selectedProvider && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-lg max-w-md w-full p-6">
+                  <h3 className="text-lg font-semibold mb-4">
+                    {selectedProvider.type === 'medical' ? 'Book Appointment' : 'Place Order'} - {selectedProvider.name}
+                  </h3>
+                  
+                  {bookingStep === 1 && (
+                    <div className="space-y-4">
+                      {selectedProvider.type === 'medical' ? (
+                        <>
+                          <div>
+                            <label className="block text-sm font-medium mb-2">Select Date</label>
+                            <input type="date" className="w-full p-2 border rounded-lg" />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-2">Select Time</label>
+                            <select className="w-full p-2 border rounded-lg">
+                              <option>9:00 AM</option>
+                              <option>10:00 AM</option>
+                              <option>11:00 AM</option>
+                              <option>2:00 PM</option>
+                              <option>3:00 PM</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-2">Reason for Visit</label>
+                            <textarea className="w-full p-2 border rounded-lg" rows={3} placeholder="Brief description..."></textarea>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center p-2 border rounded">
+                              <span>Butter Chicken</span>
+                              <div className="flex items-center space-x-2">
+                                <button className="w-6 h-6 bg-gray-200 rounded text-sm">-</button>
+                                <span>1</span>
+                                <button className="w-6 h-6 bg-gray-200 rounded text-sm">+</button>
+                                <span className="font-semibold">₹45</span>
+                              </div>
+                            </div>
+                            <div className="flex justify-between items-center p-2 border rounded">
+                              <span>Naan Bread</span>
+                              <div className="flex items-center space-x-2">
+                                <button className="w-6 h-6 bg-gray-200 rounded text-sm">-</button>
+                                <span>2</span>
+                                <button className="w-6 h-6 bg-gray-200 rounded text-sm">+</button>
+                                <span className="font-semibold">₹30</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="border-t pt-2">
+                            <div className="flex justify-between font-semibold">
+                              <span>Total: ₹75</span>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                      
+                      <div className="flex space-x-3 pt-4">
+                        <Button variant="outline" onClick={() => setShowBookingModal(false)} className="flex-1">
+                          Cancel
+                        </Button>
+                        <Button onClick={() => setBookingStep(2)} className="flex-1">
+                          Continue
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {bookingStep === 2 && (
+                    <div className="space-y-4">
+                      <div className="text-center py-4">
+                        <User className="w-12 h-12 mx-auto text-gray-400 mb-2" />
+                        <h4 className="font-semibold mb-2">Login Required</h4>
+                        <p className="text-sm text-gray-600 mb-4">
+                          Please login to complete your {selectedProvider.type === 'medical' ? 'appointment booking' : 'order'}
+                        </p>
+                      </div>
+                      
+                      <div className="flex space-x-3">
+                        <Button variant="outline" onClick={() => setBookingStep(1)} className="flex-1">
+                          Back
+                        </Button>
+                        <Button onClick={handleFinalBooking} className="flex-1">
+                          Login to Continue
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
