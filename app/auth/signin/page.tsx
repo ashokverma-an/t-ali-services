@@ -12,6 +12,7 @@ import { toast } from '@/lib/toast'
 const staticUsers = {
   'user@demo.com': { password: 'password123', role: 'user', name: 'Demo User' },
   'driver@demo.com': { password: 'password123', role: 'driver', name: 'Demo Driver' },
+  'vendor@demo.com': { password: 'password123', role: 'vendor', name: 'Demo Vendor' },
   'admin@demo.com': { password: 'password123', role: 'admin', name: 'Admin User' }
 }
 
@@ -40,6 +41,8 @@ export default function SignInPage() {
       
       if (user.role === 'admin') {
         router.push('/admin')
+      } else if (user.role === 'vendor') {
+        router.push('/vendor')
       } else {
         router.push('/dashboard')
       }
@@ -152,6 +155,14 @@ export default function SignInPage() {
                 className="w-full"
               >
                 Login as Driver
+              </Button>
+              <Button
+                onClick={() => handleDemoLogin('vendor@demo.com')}
+                variant="outline"
+                size="sm"
+                className="w-full"
+              >
+                Login as Vendor
               </Button>
               <Button
                 onClick={() => handleDemoLogin('admin@demo.com')}
